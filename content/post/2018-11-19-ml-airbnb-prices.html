@@ -313,7 +313,7 @@ summary(model3)</code></pre>
 <div id="next-we-want-to-check-if-our-final-full-model-suffers-from-auto-correlation-or-not-using-the-durbin-watson-test." class="section level4">
 <h4>Next, we want to check if our final full model suffers from Auto Correlation or not using the Durbin Watson Test.</h4>
 <pre><code>##  lag Autocorrelation D-W Statistic p-value
-##    1      0.01476564      1.970464   0.062
+##    1      0.01476564      1.970464   0.046
 ##  Alternative hypothesis: rho != 0</code></pre>
 <ul>
 <li>Using the D-W Significance table, we can reject the Null and there is no correlation among residuals. Having a total of 16 independent variables, or k, and WELL over 200 observations, or n in our sample, the DL @ 5% significance is 1.599 and Du is 1.943 which our D-W Statistic of 1.9704635 is above the upper limit indicating no Auto Correlation exists. It is also significant at the 1% with DL at 1.507 and Du at 1.847.</li>
@@ -389,4 +389,8 @@ head(dollar_predictTest)</code></pre>
 <h5>The RMSE here is still high in my opinion after training the Model with 13,600 observations. I would not seek a RMSE of 67.4365899 to efficiently price my property, and this is mostly because our model is getting trained to price property’s a bit low due to those commercial operators saturing the market with low price listings. I noticed that when the # of reviews increase, the price for the listing slightly decreases. This can either mean the model is not correct for this type of data, or that since commercial operators generally price very low they tend to have alot of transactions which results in more reviews than the average lister.</h5>
 </div>
 </div>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>These Commercial operators are bringing down the prices of Airbnb listings and true home sharers cannot compete. In fact, 10% of these Hosts (about 5,000) earned 48% of NYC total Airbnb revenue totaling $318 Million while the bottom 80% (over 40400) earned $209 Million in 2017. I believe once the playing field is leveled between Consumer Hosts and Commercial Hosts, the variance between individual fitted values and the population mean will start to decrease and the listing prices can be predicted with less noise.</p>
 </div>
