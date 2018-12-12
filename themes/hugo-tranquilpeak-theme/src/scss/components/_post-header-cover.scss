@@ -3,7 +3,7 @@
         margin:     0;
         word-break: initial;
         overflow:   hidden;
-        color:      black
+        color: 
         &:hover {
             text-decoration: none;
         }
@@ -41,7 +41,7 @@
         .post-title {
             max-width:     map-get($main-content, 'max-width');
             margin:        0 auto;
-            color:         black;
+            color:         white;
             text-shadow:   0 2px 0 rgba(0, 0, 0, 0.9);
             margin-bottom: 20px;
 
@@ -54,14 +54,14 @@
             max-width:      map-get($main-content, 'max-width');
             font-family:    map-get($font-families, 'post-meta');
             font-size:      $font-size-base;
-            color:          black !important;
+            color:          white !important;
             font-weight:    400;
             letter-spacing: 0.05em;
             text-shadow:    0 1px 0 rgba(0, 0, 0, 0.9);
             margin:         0 auto;
 
             a {
-                color: black;
+                color: white;
             }
         }
     }
