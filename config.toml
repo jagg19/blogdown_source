@@ -34,7 +34,7 @@ canonifyurls = true
 [author]
   name = "Jagger Villalobos"
   bio = "Model & Forecast | Bottom-Up Investor | Equity Researcher"
-  job = "Marklar"
+  job = "Seeking"
   location = "New York"
   # Your profile picture
   picture = "https://res.cloudinary.com/dyackvnwm/image/upload/v1542411893/profilepic.png"
@@ -185,7 +185,7 @@ canonifyurls = true
   [[params.sharingOptions]]
     name = "Facebook"
     icon = "fa-facebook-official"
-    url = "https://www.facebook.com/sharer/sharer.php?u=%s"
+    url = "https://www.facebook.com/sharer/sharer.php?url=%s"
 
   [[params.sharingOptions]]
     name = "Twitter"
