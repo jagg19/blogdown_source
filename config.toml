@@ -15,7 +15,7 @@
 baseURL = "https://jagg19.github.io"
 languageCode = "en-us"
 defaultContentLanguage = "en-us"
-title = "Jagger with Swagger"
+title = "Running on R"
 theme = "hugo-tranquilpeak-theme"
 publishDir = "/Users/jagvill/Desktop/Github/jagg19.github.io"
 disqusShortname = "hugo-tranquilpeak-theme"
@@ -33,8 +33,8 @@ canonifyurls = true
 
 [author]
   name = "Jagger Villalobos"
-  bio = "Model & Forecast | Bottom-Up Investor | Equity Researcher"
-  job = "Seeking Analyst Position"
+  bio = "Bottom-Up Analysis | Equity Researcher"
+  job = "Seeking Research Analyst Position"
   location = "New York, New York"
   # Your profile picture
   picture = "https://res.cloudinary.com/dyackvnwm/image/upload/v1542411893/profilepic.png"
