@@ -19,7 +19,7 @@ title = "Running on R"
 theme = "hugo-tranquilpeak-theme"
 publishDir = "/Users/jagvill/Desktop/Github/jagg19.github.io"
 disqusShortname = "hugo-tranquilpeak-theme"
-# googleAnalytics = "UA-123-45"
+googleAnalytics = "UA-134862415-1"
 paginate = 7
 canonifyurls = true
 
@@ -33,7 +33,7 @@ canonifyurls = true
 
 [author]
   name = "Jagger Villalobos"
-  bio = "Bottom-Up Analysis | Equity Researcher"
+  bio = "Bottom-Up Analysis | Equity Research"
   job = "Seeking Research Analyst Position"
   location = "New York, New York"
   # Your profile picture
