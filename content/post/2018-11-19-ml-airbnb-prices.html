@@ -8,6 +8,7 @@ coverSize: partial
 thumbnailImagePosition: left
 categories: ["Data Analysis", "Predictions", "Programming"]
 tags: ["Project","Machine Learning", "Airbnb","Price Predictions", "Programming"]
+summary: "While most of us have used or considered booking an Airbnb, there are a lot less of us who have considered posting our own property on Airbnb. Being that New York City rent is extremely high, I’ve considered listing my Brooklyn apartment to see what kind of profits I could turn. During this time, I was learning about multiple linear regression in my Quantitative Analysis & Forecasting class and was assigned a project to create a linear model to predict some form of dependent variable. I figured why not use this opportunity to dig a little deeper on estimating a listing price for my apartment."
 ---
 
 
@@ -18,7 +19,7 @@ tags: ["Project","Machine Learning", "Airbnb","Price Predictions", "Programming"
 </div>
 <div id="listing-on-airbnb" class="section level1">
 <h1>Listing on Airbnb</h1>
-<p>While most of us have used or considered booking an Airbnb, there are a lot less of us who have considered posting our own property on Airbnb. Being that I am infatuated with profit and New York City rent is extremely high, I considered listing my Brooklyn apartment to see what kind of profits I could turn. At the time, I was learning about multiple linear regression in my Quantitative Analysis &amp; Forecasting class and I was given a project to create a linear model to predict some form of dependent variable. I figured why not use this opportunity to dig a little deeper on estimating a listing price for my apartment. This led me to stumble upon pretty interesting information about commercial operators listings on Airbnb in New York City. To keep this post in line with the subject, I will just quickly summarize what I found in the following paragraph.</p>
+<p>While most of us have used or considered booking an Airbnb, there are a lot less of us who have considered posting our own property on Airbnb. Being that New York City rent is extremely high, I’ve considered listing my Brooklyn apartment to see what kind of profits I could turn. During this time, I was learning about multiple linear regression in my Quantitative Analysis &amp; Forecasting class and was assigned a project to create a linear model to predict some form of dependent variable. I figured why not use this opportunity to dig a little deeper on estimating a listing price for my apartment. This led me to stumble upon pretty interesting information about commercial operators listings on Airbnb in New York City. To keep this post in line with the subject, I will just quickly summarize what I found in the following paragraph.</p>
 </div>
 <div id="commercial-operators" class="section level1">
 <h1>Commercial Operators</h1>
@@ -313,7 +314,7 @@ summary(model3)</code></pre>
 <div id="next-we-want-to-check-if-our-final-full-model-suffers-from-autocorrelation-or-not-using-the-durbin-watson-test." class="section level4">
 <h4>Next, we want to check if our final full model suffers from autocorrelation or not using the Durbin Watson Test.</h4>
 <pre><code>##  lag Autocorrelation D-W Statistic p-value
-##    1      0.01476564      1.970464   0.066
+##    1      0.01476564      1.970464   0.042
 ##  Alternative hypothesis: rho != 0</code></pre>
 <ul>
 <li>Using the D-W Significance table, we can reject the null and there is no correlation among the residuals. Having a total of 16 independent variables, or k, and WELL over 200 observations, or n in our sample, the DL @ 5% significance is 1.599 and Du is 1.943 which our D-W Statistic of 1.9704635 is above the upper limit indicating no autocorrelation exists. It is also significant at the 1% with DL at 1.507 and Du at 1.847.</li>
