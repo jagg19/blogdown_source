@@ -140,7 +140,7 @@ Since I do not have any open positions, I'll receive a message that states "No p
 today = Sys.Date()
 get_bars(ticker = "SPY", from = today)
 
-#Getting the last month of daily prices for Amazon
+#Getting the last month of daily prices for GE
 get_bars(ticker = "GE", timeframe = "day", from = Sys.Date()-30, to = today)
 ```
 
@@ -249,18 +249,18 @@ These functions will start with "get_poly" and "get_meta". Get meta supplies end
 #### Get Poly Aggregate Price Data
 
 ```{r,eval=FALSE}
-#Getting default pricing data on AMZN (daily): 
-get_poly_agg_quote(ticker = "AMZN",from = "2019-04-01", to = "2019-04-12")
+#Getting default pricing data on GE (daily): 
+get_poly_agg_quote(ticker = "GE",from = "2019-04-01", to = "2019-04-12")
 
-#Getting minute pricing data on AMZN: 
-get_poly_agg_quote("AMZN", from = "2019-04-11", to = "2019-04-12", timespan = "minute")
+#Getting minute pricing data on GE: 
+get_poly_agg_quote("GE", from = "2019-04-11", to = "2019-04-12", timespan = "minute")
 
 
-#Getting quarterly pricing data on AMZN: 
-get_poly_agg_quote("AMZN", from = "2018-01-01", to = "2019-04-12", timespan = "quarter") 
+#Getting quarterly pricing data on GE: 
+get_poly_agg_quote("GE", from = "2018-01-01", to = "2019-04-12", timespan = "quarter") 
 
-#Getting yearly pricing data on AMZN: 
-get_poly_agg_quote("AMZN", from = "2015-01-01", to = "2019-12-31", timespan = "year")
+#Getting yearly pricing data on GE: 
+get_poly_agg_quote("GE", from = "2015-01-01", to = "2019-12-31", timespan = "year")
 ```
 
 <br>
@@ -286,8 +286,8 @@ get_poly_agg_quote("AMZN", from = "2015-01-01", to = "2019-12-31", timespan = "y
 #### Get Meta News Endpoint
 
 ```{r,eval=FALSE}
-#Getting the last 100 news articles for AMZN:
-get_meta(ticker = "AMZN", endpoint = "news", perpage = "100")
+#Getting the last 100 news articles for GE:
+get_meta(ticker = "GE", endpoint = "news", perpage = "100")
 ```
 
 
