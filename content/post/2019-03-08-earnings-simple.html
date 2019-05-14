@@ -55,7 +55,7 @@ summary: "You often hear two things when watching or reading financial news. One
 <p>Being that we are backtesting the NASDAQ, I was quite surprised to see only one sector at a loss and the Energy coming out on top. After looking a little deeper, I found that only two stocks were responsible for the Energy Sector coming out on top. If additional energy companies would have made it through our initial Market Cap screening, then most likely Technology would have taken the #1 spot. Since this was such a simple strategy, I was very surprised to see only one sector at a loss. To see if only a few companies were responsible for the overall loss or if the losses were evenly spread out through the sector, we view the distribution on a histogram. After taking a quick look, it is clear to see that the returns are pretty normally distributed. Below is a table that lists each Sector by total overall returns and the number of companies in each sector.</p>
 <pre><code>## # A tibble: 12 x 3
 ##    SECTOR                OVERALL.RTRN Companies
-##    &lt;chr&gt;                        &lt;dbl&gt;     &lt;int&gt;
+##    &lt;chr&gt;                        &lt;dbl&gt;     &lt;dbl&gt;
 ##  1 Energy                       14.5          2
 ##  2 Technology                   11.7         92
 ##  3 Miscellaneous                 9.5         12
@@ -86,7 +86,7 @@ summary: "You often hear two things when watching or reading financial news. One
 </div>
 <pre><code>## # A tibble: 282 x 4
 ##     Symbol OVERALL.RTRN `# of Trades` SECTOR               
-##     &lt;chr&gt;         &lt;dbl&gt;         &lt;int&gt; &lt;chr&gt;                
+##     &lt;chr&gt;         &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;                
 ##   1 ETSY           85.0            12 Miscellaneous        
 ##   2 LOPE           77.4            13 Consumer Services    
 ##   3 LOGI           72.0            13 Technology           

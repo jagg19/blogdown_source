@@ -1,0 +1,313 @@
+---
+title: Using MySQL with R
+author: Jagger Villalobos
+date: '2019-05-14'
+slug: mysql-r
+coverImage: https://res.cloudinary.com/dyackvnwm/image/upload/v1557824027/hqdefault.jpg
+coverSize: partial
+thumbnailImagePosition: left
+categories: [R, Relational Database, Large Datasets]
+tags: [MySQL, programming, beautiful-plots, database]
+summary: "If you're an R programmer then you've probably crashed your R session a few times when trying to read datasets of a over 2GB+. It can get a little frustrating when all you want to do is harness the true power behind R through building statistical models on these large datasets and your session crashes with a window stating 'R SESSION ABORTED'. Since R executes code in-memory, which is the computers available RAM, you will encounter failures when reading datasets larger than the available memory. Also, once you have enough dataframes stored then your R session can become extremely slow and affect your work severely. One of my classes at Pace University showed me the value in storing your larger datasets in a MySQL database and I decided to learn how to stream these datasets in R so we do not have to store the larger datasets in-memory."
+---
+
+
+
+<div id="using-mysql-with-r" class="section level1">
+<h1>Using MySQL with R</h1>
+<ul>
+<li>Benefits of a Relational Database</li>
+<li>Connecting to MySQL and reading + writing data from R</li>
+<li>Simple analysis using the tables from MySQL</li>
+</ul>
+<p>If you’re an R programmer, then you’ve probably crashed your R session a few times when trying to read datasets of over 2GB+. It can get a little frustrating when all you want to do is harness the true power behind R through building statistical models on these large datasets, and your session crashes with a window stating “R SESSION ABORTED”. Since R executes code in-memory, which is the computers available RAM, you will encounter failures when reading datasets larger than the available memory. Also, once you have enough data frames stored, then your R session can become extremely slow and affect your work severely. One of my classes at Pace University showed me the value in storing your larger datasets in a MySQL database, and I decided to learn how to stream these datasets in R, so we do not have to store the larger datasets in-memory. This post will briefly discuss a few advantages of using a database to store your data and run through a basic example of using R to transfer data to and from MySQL. I will assume you already have access to a MySQL database.</p>
+<p><br></p>
+</div>
+<div id="relational-database-vs-in-memory" class="section level1">
+<h1>Relational Database vs In Memory</h1>
+<p>Relational databases like MySQL, organize data into tables (spreadsheet format) and can link values in tables to each other (hence “relational”). These relationships are columns that are stored as “unique” &amp; “foreign” key values. Generally speaking, they are better at handling large datasets and are more efficient at storing and accessing data than CSVs due to compression and indexing rules. The data is stored on-disk with MySQL, until it is called through a query, which is different from the in-memory approach R uses for data.frames, matrices, tibbles, vectors, etc. When reading data stored in a file or data.frame in R, the data must all fit in the current available RAM memory.</p>
+<p><br></p>
+</div>
+<div id="the-data" class="section level1">
+<h1>The Data</h1>
+<p>We will use the Chicago Parking Ticket dataset from <a href="%22https://www.propublica.org/datastore/dataset/chicago-parking-ticket-data%22">here</a> which contains 2.07GB 28,272,580 rows containing details on all parking and vehicle compliance tickets issued in Chicago from Jan. 1, 2007 to May 14, 2018, from the Chicago Department of Finance. This isn’t necessarily a “large” dataset, but I believe it’s a large enough size to notice a difference in the performance. First, I am going to read a smaller portion of the data to get an idea of the data types inside the table.</p>
+<pre class="r"><code>#Fread to quickly load into R to get a sense of what your data looks like. 
+test.csv &lt;- data.table::fread(&quot;/usr/local/mysql-8.0.15-macos10.14-x86_64/data/parking_tickets.csv&quot;, nrows = 1000000)
+
+#View
+str(test.csv)</code></pre>
+<pre><code>## Classes &#39;data.table&#39; and &#39;data.frame&#39;:   1000000 obs. of  23 variables:
+##  $ ticket_number        :integer64 51551278 51491256 50433524 51430906 51507779 51260468 51501733 51260469 ... 
+##  $ issue_date           : chr  &quot;2007-01-01 00:00:00&quot; &quot;2007-01-01 00:00:00&quot; &quot;2007-01-01 00:01:00&quot; &quot;2007-01-01 00:01:00&quot; ...
+##  $ violation_location   : chr  &quot;6014 W 64TH ST&quot; &quot;530 N MICHIGAN&quot; &quot;4001 N LONG&quot; &quot;303 E WACKER&quot; ...
+##  $ license_plate_number : chr  &quot;90ad622c3274c9bdc9d8c812b79a01d0aaf7479f2bd7431f8935baa4048d0c86&quot; &quot;bce4dc26b2c96965380cb2b838cdbb95632b7b5716061255c7ed9aa52b17163c&quot; &quot;44641e828f4d894c883c07c566063c2d99d08f2c03b3d41682d6d8201a0939bd&quot; &quot;eee50ca0d9be2debd0e7d45bad05b8674a6cf5b892230f54cf1923e36990ada9&quot; ...
+##  $ license_plate_state  : chr  &quot;IL&quot; &quot;IL&quot; &quot;IL&quot; &quot;IL&quot; ...
+##  $ license_plate_type   : chr  &quot;PAS&quot; &quot;PAS&quot; &quot;PAS&quot; &quot;PAS&quot; ...
+##  $ zipcode              : chr  &quot;60638&quot; &quot;606343801&quot; &quot;60148&quot; &quot;60601&quot; ...
+##  $ violation_code       : chr  &quot;0976160F&quot; &quot;0964150B&quot; &quot;0976160F&quot; &quot;0964110A&quot; ...
+##  $ violation_description: chr  &quot;EXPIRED PLATES OR TEMPORARY REGISTRATION&quot; &quot;PARKING/STANDING PROHIBITED ANYTIME&quot; &quot;EXPIRED PLATES OR TEMPORARY REGISTRATION&quot; &quot;DOUBLE PARKING OR STANDING&quot; ...
+##  $ unit                 : chr  &quot;8&quot; &quot;18&quot; &quot;16&quot; &quot;152&quot; ...
+##  $ unit_description     : chr  &quot;CPD&quot; &quot;CPD&quot; &quot;CPD&quot; &quot;CPD&quot; ...
+##  $ vehicle_make         : chr  &quot;CHEV&quot; &quot;CHRY&quot; &quot;BUIC&quot; &quot;NISS&quot; ...
+##  $ fine_level1_amount   : int  50 50 50 100 25 50 100 50 120 50 ...
+##  $ fine_level2_amount   : int  100 100 100 200 50 100 200 100 240 100 ...
+##  $ current_amount_due   : num  0 50 0 0 0 50 244 0 0 0 ...
+##  $ total_payments       : num  100 0 50 100 50 0 0 50 240 100 ...
+##  $ ticket_queue         : chr  &quot;Paid&quot; &quot;Define&quot; &quot;Paid&quot; &quot;Paid&quot; ...
+##  $ ticket_queue_date    : chr  &quot;2007-05-21 00:00:00&quot; &quot;2007-01-22 00:00:00&quot; &quot;2007-01-31 00:00:00&quot; &quot;2007-03-08 00:00:00&quot; ...
+##  $ notice_level         : chr  &quot;SEIZ&quot; &quot;&quot; &quot;VIOL&quot; &quot;DETR&quot; ...
+##  $ hearing_disposition  : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;Liable&quot; ...
+##  $ notice_number        :integer64 5048648030 0 5079875240 5023379950 5079891400 0 5038039180 5052314130 ... 
+##  $ officer              : chr  &quot;15227&quot; &quot;18320&quot; &quot;3207&quot; &quot;19410&quot; ...
+##  $ address              : chr  &quot;6000 w 64th st, chicago, il&quot; &quot;500 n michigan, chicago, il&quot; &quot;4000 n long, chicago, il&quot; &quot;300 e wacker, chicago, il&quot; ...
+##  - attr(*, &quot;.internal.selfref&quot;)=&lt;externalptr&gt;</code></pre>
+<pre class="r"><code>head(test.csv)</code></pre>
+<pre><code>##    ticket_number          issue_date violation_location
+## 1:      51551278 2007-01-01 00:00:00     6014 W 64TH ST
+## 2:      51491256 2007-01-01 00:00:00     530 N MICHIGAN
+## 3:      50433524 2007-01-01 00:01:00        4001 N LONG
+## 4:      51430906 2007-01-01 00:01:00       303 E WACKER
+## 5:      51507779 2007-01-01 00:01:00        7 E 41ST ST
+## 6:      51260468 2007-01-01 00:03:00      1039 W LELAND
+##                                                license_plate_number
+## 1: 90ad622c3274c9bdc9d8c812b79a01d0aaf7479f2bd7431f8935baa4048d0c86
+## 2: bce4dc26b2c96965380cb2b838cdbb95632b7b5716061255c7ed9aa52b17163c
+## 3: 44641e828f4d894c883c07c566063c2d99d08f2c03b3d41682d6d8201a0939bd
+## 4: eee50ca0d9be2debd0e7d45bad05b8674a6cf5b892230f54cf1923e36990ada9
+## 5: 244116ca3eed4235b1f61f6d753d8c688be2a48c9fdd976fa4c729c6f90f3d76
+## 6: b167d28412271c62a8e30cbb5396ffb97f12c08382f9a6f46be4e1c8bb02f444
+##    license_plate_state license_plate_type   zipcode violation_code
+## 1:                  IL                PAS     60638       0976160F
+## 2:                  IL                PAS 606343801       0964150B
+## 3:                  IL                PAS     60148       0976160F
+## 4:                  IL                PAS     60601       0964110A
+## 5:                  IL                PAS 605053013       0976220B
+## 6:                  IL                TMP     60632       0964150B
+##                       violation_description unit unit_description
+## 1: EXPIRED PLATES OR TEMPORARY REGISTRATION    8              CPD
+## 2:      PARKING/STANDING PROHIBITED ANYTIME   18              CPD
+## 3: EXPIRED PLATES OR TEMPORARY REGISTRATION   16              CPD
+## 4:               DOUBLE PARKING OR STANDING  152              CPD
+## 5:    SMOKED/TINTED WINDOWS PARKED/STANDING    2              CPD
+## 6:      PARKING/STANDING PROHIBITED ANYTIME   23              CPD
+##    vehicle_make fine_level1_amount fine_level2_amount current_amount_due
+## 1:         CHEV                 50                100                  0
+## 2:         CHRY                 50                100                 50
+## 3:         BUIC                 50                100                  0
+## 4:         NISS                100                200                  0
+## 5:         INFI                 25                 50                  0
+## 6:         BUIC                 50                100                 50
+##    total_payments ticket_queue   ticket_queue_date notice_level
+## 1:            100         Paid 2007-05-21 00:00:00         SEIZ
+## 2:              0       Define 2007-01-22 00:00:00             
+## 3:             50         Paid 2007-01-31 00:00:00         VIOL
+## 4:            100         Paid 2007-03-08 00:00:00         DETR
+## 5:             50         Paid 2007-08-29 00:00:00         SEIZ
+## 6:              0       Define 2007-01-04 00:00:00             
+##    hearing_disposition notice_number officer                     address
+## 1:                        5048648030   15227 6000 w 64th st, chicago, il
+## 2:                                 0   18320 500 n michigan, chicago, il
+## 3:                        5079875240    3207    4000 n long, chicago, il
+## 4:              Liable    5023379950   19410   300 e wacker, chicago, il
+## 5:                        5079891400   66396    7 e 41st st, chicago, il
+## 6:                                 0    3307  1000 w leland, chicago, il</code></pre>
+<p>Great, so it looks like our data is mixed between integers, numeric, and character types. We can also see some missing values in some column like “hearing_disposition”. Now its time to insert some of this data into MySQL.</p>
+<p><br></p>
+</div>
+<div id="connecting-to-mysql-from-r" class="section level1">
+<h1>Connecting to MySQL from R</h1>
+<p>When connecting to any database or connection that requires passwords, it is always highly recommended to store these passwords in your local environment for security reasons. This is especially the case when sharing your code to others or via the internet.</p>
+<pre class="r"><code>#Load RMariaDB if it is not loaded already
+if(!&quot;RMariaDB&quot; %in% (.packages())){require(RMariaDB)}
+
+#Connecting to MySQL DB
+stuffDB &lt;- dbConnect(MariaDB(), user = &quot;root&quot;, password = Sys.getenv(&quot;MYSQL_PASSWORD&quot;), dbname = &quot;my_db&quot;, host = &quot;localhost&quot;)
+
+#List tables in DB
+dbListTables(stuffDB)</code></pre>
+<pre><code>## [1] &quot;alpaca_tradeable_assets_nas_nyse_earnings_tbl&quot;
+## [2] &quot;parking_tickets_chicago&quot;</code></pre>
+<p>If connected succesfully, you should see the names of your tables when “dbListTables” is called.</p>
+<p><br></p>
+</div>
+<div id="creating-tables-in-mysql-from-r" class="section level1">
+<h1>Creating tables in MySQL from R</h1>
+<p>Since I want to load the data into MySQL, I need to first create the table that reflects the same columns as the CSV and ensure the data type columns are set correctly. We can see the data types for each column from our earlier “str()” call. See below on how to create a query variable containing SQL syntax.</p>
+<pre class="r"><code>query&lt;-&quot;CREATE TABLE parking_tickets_chicago (
+  ticket_number TEXT,
+  issue_date TEXT,
+  violation_location  TEXT,
+  license_plate_number TEXT,
+  license_plate_state TEXT,
+  license_plate_type TEXT,
+  zipcode TEXT,
+  violation_code TEXT,
+  violation_description TEXT,
+  unit INT,
+  unit_description TEXT,
+  vehicle_make TEXT,
+  fine_level1_amount INT,
+  fine_level2_amount INT,
+  current_amount_due INT,
+  total_payments INT,
+  ticket_queue TEXT,
+  ticket_queue_date TEXT,
+  notice_level TEXT,
+  hearing_disposition TEXT,
+  notice_number TEXT,
+  officer TEXT,
+  address TEXT);&quot;
+
+
+#Send the query to MySQL for execution
+results &lt;- dbSendQuery(stuffDB, query)
+dbClearResult(results)</code></pre>
+<p><br></p>
+</div>
+<div id="inserting-the-data" class="section level1">
+<h1>Inserting the data</h1>
+<p>Now that we have created the table correctly, we can begin inserting the data into the MySQL table directly from R. First we will use a small example before inserting all 28 million rows.</p>
+<pre class="r"><code>query &lt;- &quot;INSERT INTO parking_tickets_chicago(ticket_number,issue_date,violation_location,license_plate_number,license_plate_state,license_plate_type,zipcode,violation_code,violation_description,unit,unit_description,vehicle_make,fine_level1_amount,fine_level2_amount,current_amount_due,total_payments,ticket_queue,ticket_queue_date,notice_level,hearing_disposition,notice_number,officer,address)
+VALUES(51636768,&#39;2007-01-12 10:34:00&#39;,&#39;1450 N THORNDALE&#39;,&#39;fc4a98382378c750027d71138b4cbf3237216a6452ec9c3b8c3533f0c1c20d02&#39;,&#39;IL&#39;,&#39;TRK&#39;,605152677,&#39;0976160F&#39;,&#39;EXPIRED PLATES OR TEMPORARY REGISTRATION&#39;,24,&#39;CPD&#39;,&#39;TOYT&#39;,50,100,0,50,&#39;Paid&#39;,&#39;2007-01-30 00:00:00&#39;,&#39;&#39;,&#39;&#39;,0,17482,&#39;1400 n thorndale, chicago, il&#39;);&quot;
+
+
+
+#Sending the query to MySQL for execution and getting the result.
+results &lt;- dbSendQuery(stuffDB, query)
+
+
+#Checking if it was added correctly
+dbReadTable(stuffDB,&quot;parking_tickets_chicago&quot;)</code></pre>
+<p>So far so good!! We have connected to our database, created a table, inserted data into our new table and check the results. Now let’s do the entire dataset so we can illustrate the value and efficiency of integrating MySQL &amp; R!</p>
+<p><br></p>
+</div>
+<div id="reading-all-data---chunk-wise" class="section level1">
+<h1>Reading all data - Chunk Wise</h1>
+<p>For any large datasets, I like to use the “read.table” function and create a open connection to the file using file(open=“r”). This way, we can read or write the data chunkwise, instead of all at once in one big operation.</p>
+<pre class="r"><code>#Create index and select a chunksize
+index &lt;- 0
+chunkSize &lt;- 100000
+
+#Create column name vector
+col_names &lt;- c(&quot;ticket_number&quot;, &quot;issue_date&quot;, &quot;violation_location&quot;, &quot;license_plate_number&quot;, &quot;license_plate_state&quot;, &quot;license_plate_type&quot;, &quot;zipcode&quot;, &quot;violation_code&quot;, &quot;violation_description&quot;, &quot;unit&quot;, &quot;unit_description&quot;, &quot;vehicle_make&quot;, &quot;fine_level1_amount&quot;, &quot;fine_level2_amount&quot;, &quot;current_amount_due&quot;, &quot;total_payments&quot;, &quot;ticket_queue&quot;, &quot;ticket_queue_date&quot;, &quot;notice_level&quot;, &quot;hearing_disposition&quot;, &quot;notice_number&quot;, &quot;officer&quot;, &quot;address&quot;)
+
+
+#Open the file connection
+con &lt;- file(description=&quot;/usr/local/mysql-8.0.15-macos10.14-x86_64/data/parking_tickets.csv&quot;,open=&quot;r&quot;)   
+
+#Read the data chunkWise
+dataChunk &lt;- read.table(con, nrows=chunkSize, header=F, fill=TRUE, sep=&quot;,&quot;, quote = &#39;&quot;&#39;, col.names = col_names)
+
+#Write &amp; append the tables chunkWise
+dbWriteTable(stuffDB, value = dataChunk, row.names = FALSE, name = &quot;parking_tickets_chicago&quot;, append = TRUE)
+
+
+#Repeat for each dataChunk
+while (nrow(dataChunk) &gt; 0) {
+  index &lt;- index + 1
+  print(paste(&#39;Processing rows:&#39;, index * chunkSize))
+  
+  dataChunk &lt;- read.table(con, nrows=chunkSize, skip=0, header=FALSE, fill = TRUE, sep=&quot;,&quot;, col.names = col_names)
+  
+  dbWriteTable(stuffDB, value = dataChunk, row.names = FALSE, name = &quot;parking_tickets_chicago&quot;, append = TRUE)
+}
+
+#Close the open file connection
+close(con)</code></pre>
+<p>Let me explain the above process step by step so it easier to understand.</p>
+<p><strong>Step 1</strong>. Create our index, chunk size, col_names, and file connection variables. We are choosing a chunk size of 100k. This means that each index is 100,000 rows of the data frame, so index 1 is 1-100k, index 2 is 100k-200k, index 3 is 200-300k, and keeps increasing until all of our rows have been read chunkwise. This allows you to run arithmetic operations on datasets too large to read in memory.</p>
+<p><strong>Step 2</strong>. Once we set these, we can create our “dataChunk” using our variables as the values for read.table arguments.</p>
+<p><strong>Step 3</strong>. Each dataChunk is sent to our newly created table in MySQL and will be appended to our newly created table since we set “append=TRUE” in our dbWriteTable() call.</p>
+<p><strong>Step 4</strong>. Repeat this until all the data has been read through each chunk and our while statement is satisfied.</p>
+<p>Now let us run a simple SQL and R query to interact with the MySQL database. The “dplyr” package makes it possible for us to use R code instead of SQL, to extract and manipulate from the database because it converts the R query to SQL before it’s sent to the DB.</p>
+</div>
+<div id="mysql-query" class="section level1">
+<h1>MySQL query</h1>
+<p>Let us do a very simple query to count the issued tickets by month. We can create a graph to visualize which month had the most tickets issued.</p>
+<pre class="r"><code>query &lt;- &quot;SELECT monthname(issue_date) as month, year(issue_date) as year, count(ticket_number) as number 
+FROM my_db.parking_tickets_chicago 
+GROUP BY month,year
+HAVING month is not null AND year is not null;&quot;
+
+
+results &lt;- dbSendQuery(stuffDB, query)
+db_results &lt;- dbFetch(results)
+dbClearResult(results)
+
+#Filter out any results that could possibly be an error due to the data-entry mistake for date
+db_results &lt;- db_results %&gt;% filter(number != 1) %&gt;% mutate(month = factor(month,levels = month.name), year = as.integer(year), number = as.numeric(number)) %&gt;% arrange(year)
+
+
+#Preview of our results
+head(db_results)
+
+#Plot 
+ggplot(db_results, aes(factor(month,levels = month.name),number)) + 
+  geom_bar(stat=&quot;identity&quot;, aes(fill = year)) + 
+  labs(
+    title = &quot;Boxplot&quot;, 
+    subtitle = &quot;Count of Tickets by Month&quot;,
+    x=&quot;Month&quot;, 
+    y=&quot;Occurences&quot;
+    ) + 
+  scale_y_continuous(labels = scales::comma) +
+  scale_fill_continuous(&quot;Year&quot;, breaks=c(2008:2018), labels = c(2008:2018), type = &quot;viridis&quot;) +
+  theme_dark() + 
+  theme(axis.text.x = element_text(angle=50, vjust=0.65)) </code></pre>
+<div class="figure">
+<img src="/img/MySQL-R/tickets_month_year.png" />
+
+</div>
+</div>
+<div id="r-query-using-dplyr" class="section level1">
+<h1>R query using Dplyr</h1>
+<p>We can even do the same thing but all in R without having to use any SQL. This is beneficial for the users who don’t use SQL and also makes it easier to share. Although, the time difference in performance is noticeable between these two approaches. I believe it’s best to just use SQL syntax since it seems more efficient, but I will review this using R syntax below.</p>
+<pre class="r"><code>library(dplyr)   
+library(lubridate)  </code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     date</code></pre>
+<pre class="r"><code>#Reads part of the dataframe in our DB so it does not store it all in memory
+search_db &lt;- tbl(stuffDB, &quot;parking_tickets_chicago&quot;)
+
+#R syntax using dplyr
+search_db &lt;- search_db %&gt;% 
+  select(issue_date, ticket_number) %&gt;%
+  mutate(month = month(issue_date), year = year(issue_date), number = ticket_number) %&gt;% 
+  filter(month != &quot;&quot; &amp; year != &quot;&quot;) %&gt;% 
+  group_by(month, year) %&gt;% select(month,year,number)
+
+
+print(search_db)</code></pre>
+<pre><code>## # Source:   lazy query [?? x 3]
+## # Database: mysql 8.0.15 [root@localhost:/my_db]
+## # Groups:   month, year
+##    month           year            number  
+##    &lt;S3: integer64&gt; &lt;S3: integer64&gt; &lt;chr&gt;   
+##  1 1               2007            51636768
+##  2 1               2007            51551278
+##  3 1               2007            51491256
+##  4 1               2007            50433524
+##  5 1               2007            51430906
+##  6 1               2007            51507779
+##  7 1               2007            51260468
+##  8 1               2007            51501733
+##  9 1               2007            51260469
+## 10 1               2007            51417189
+## # … with more rows</code></pre>
+<pre class="r"><code>#Show how dplyr converts the R code to SQL behind the scenes.
+show_query(search_db)</code></pre>
+<pre><code>## &lt;SQL&gt;
+## SELECT `month`, `year`, `number`
+## FROM (SELECT `issue_date`, `ticket_number`, EXTRACT(month FROM `issue_date`) AS `month`, EXTRACT(year FROM `issue_date`) AS `year`, `ticket_number` AS `number`
+## FROM `parking_tickets_chicago`) `dbplyr_002`
+## WHERE (`month` != &#39;&#39; AND `year` != &#39;&#39;)</code></pre>
+<pre class="r"><code>#Close connection
+dbDisconnect(stuffDB)</code></pre>
+</div>
+<div id="wraping-it-up" class="section level1">
+<h1>Wraping it up</h1>
+<p>Not only did we use SQL syntax to read/write data to our MySQL database from R, but we also used R syntax to do it as well! With the help of the “dplyr” package, you can use only R syntax to wrangle data stored in your MySQL database. Clearly, using MySQL with R will not only prevent unnecessary data clogging the memory but also saves time since the chunkWise approach cuts the writing time down significantly. If you’re an R programmer who runs into large datasets, even if it’s just occasionally, then I highly suggest you look into using MySQL or any other relational databases with R.</p>
+</div>
