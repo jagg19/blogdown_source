@@ -125,8 +125,6 @@ stuffDB &lt;- dbConnect(MariaDB(), user = &quot;root&quot;, password = Sys.geten
 
 #List tables in DB
 dbListTables(stuffDB)</code></pre>
-<pre><code>## [1] &quot;alpaca_tradeable_assets_nas_nyse_earnings_tbl&quot;
-## [2] &quot;parking_tickets_chicago&quot;</code></pre>
 <p>If connected succesfully, you should see the names of your tables when “dbListTables” is called.</p>
 <p><br></p>
 </div>
@@ -263,13 +261,9 @@ ggplot(db_results, aes(factor(month,levels = month.name),number)) +
 <h1>R query using Dplyr</h1>
 <p>We can even do the same thing but all in R without having to use any SQL. This is beneficial for the users who don’t use SQL and also makes it easier to share. Although, the time difference in performance is noticeable between these two approaches. I believe it’s best to just use SQL syntax since it seems more efficient, but I will review this using R syntax below.</p>
 <pre class="r"><code>library(dplyr)   
-library(lubridate)  </code></pre>
-<pre><code>## 
-## Attaching package: &#39;lubridate&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:base&#39;:
-## 
-##     date</code></pre>
-<pre class="r"><code>#Reads part of the dataframe in our DB so it does not store it all in memory
+library(lubridate)  
+
+#Reads part of the dataframe in our DB so it does not store it all in memory
 search_db &lt;- tbl(stuffDB, &quot;parking_tickets_chicago&quot;)
 
 #R syntax using dplyr
@@ -280,31 +274,13 @@ search_db &lt;- search_db %&gt;%
   group_by(month, year) %&gt;% select(month,year,number)
 
 
-print(search_db)</code></pre>
-<pre><code>## # Source:   lazy query [?? x 3]
-## # Database: mysql 8.0.15 [root@localhost:/my_db]
-## # Groups:   month, year
-##    month           year            number  
-##    &lt;S3: integer64&gt; &lt;S3: integer64&gt; &lt;chr&gt;   
-##  1 1               2007            51636768
-##  2 1               2007            51551278
-##  3 1               2007            51491256
-##  4 1               2007            50433524
-##  5 1               2007            51430906
-##  6 1               2007            51507779
-##  7 1               2007            51260468
-##  8 1               2007            51501733
-##  9 1               2007            51260469
-## 10 1               2007            51417189
-## # … with more rows</code></pre>
-<pre class="r"><code>#Show how dplyr converts the R code to SQL behind the scenes.
-show_query(search_db)</code></pre>
-<pre><code>## &lt;SQL&gt;
-## SELECT `month`, `year`, `number`
-## FROM (SELECT `issue_date`, `ticket_number`, EXTRACT(month FROM `issue_date`) AS `month`, EXTRACT(year FROM `issue_date`) AS `year`, `ticket_number` AS `number`
-## FROM `parking_tickets_chicago`) `dbplyr_002`
-## WHERE (`month` != &#39;&#39; AND `year` != &#39;&#39;)</code></pre>
-<pre class="r"><code>#Close connection
+print(search_db)
+
+
+#Show how dplyr converts the R code to SQL behind the scenes.
+show_query(search_db)
+
+#Close connection
 dbDisconnect(stuffDB)</code></pre>
 </div>
 <div id="wrapping-it-up" class="section level1">
