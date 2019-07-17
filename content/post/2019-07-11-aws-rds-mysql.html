@@ -34,7 +34,7 @@ categories:
 </div>
 <div id="launching-a-aws-rds-instance-to-run-mysql" class="section level1">
 <h1>Launching a AWS RDS Instance to run MySQL</h1>
-<p>To start, select the services tab, RDS under database, and then click create database.</p>
+<p>To start, select the services tab, RDS under database, and then click create database. There are plenty of configuration settings, but leave them to default unless stated below.</p>
 <div id="step-1" class="section level5">
 <h5>Step 1</h5>
 <p>Select the DB Engine. We will select MySQL and make sure to check the box that says “Only enable options eligible for RDS free Usage Tier.” Click Next.</p>
@@ -106,6 +106,9 @@ categories:
 <p>I’m going to show two ways to connect to our new AWS RDS Instance. If you have no interest in using the terminal to connect, then you can <a href="#workbench">click here</a> to learn how to connect your Instance to MySQL Workbench.</p>
 <div id="terminal" class="section level4">
 <h4>Terminal</h4>
+<blockquote>
+<p>You must already have a version mysql installed into your computer before you can call mysql. Please see <a href="https://dev.mysql.com/doc/mysql-installation-excerpt/8.0/en/">MySQL Installation</a> and choose the instructions for the appropiate operating system.</p>
+</blockquote>
 <p>Copy and paste your Endpoint which you will find under “Connectivity and security”. To connect through your local terminal, enter the below command with your appropriate values.</p>
 <p><code>mysql -h &lt;Endpoint&gt; -u &lt;Master Username&gt; -p</code></p>
 <p>Then it will prompt you for a password which is the master password you created with your username. Once you entered everything correctly, you will be logged into your MySQL DB that is hosted on Amazon RDS. Let’s see if the “testing” database was loading correctly during the initial set up.</p>
