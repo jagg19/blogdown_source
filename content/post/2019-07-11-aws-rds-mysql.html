@@ -30,7 +30,7 @@ categories:
 <p>If you had a chance to read my post <a href="https://jagg19.github.io/2019/05/mysql-r/">Using MySQL with R</a>, you’ll see that I like to use MySQL to store larger datasets for open-source projects. I found myself with access issues when trying to use MySQL as the database for a shiny app that I was looking to deploy. After googling around a bit, the best solution was to utilize Amazon RDS (Relational Database Service) to properly provide access to the database on my shiny app.</p>
 <p>Amazon RDS is another amazing service provided by AWS (Amazon Web Services) that is designed to set up, manage, and scale a relational database such as MySQL, PostgreSQL, Oracle, SQL Server, and more in the cloud. Not only that, but Amazon RDS assumes the day-to-day management tasks associated with MySQL such as backups, failure detections, recovery, and scaling. I decided to make the switch onto Amazon RDS using the free tier so I could make my database easily accessible for my shiny app. In this post, I will provide two ways for you to make this necessary switch and why you should.</p>
 <p>At the minimum, you will need an <a href="https://aws.amazon.com">Amazon Web Services</a> account to create an RDS. When you create an RDS, you are provided with an endpoint URL which we will use as the host when connecting through SSH or on MySQL Workbench. See below on how to create an RDS after you log in to AWS.</p>
-<p><br> <br></p>
+<p><br></p>
 </div>
 <div id="creating-security-group-for-rds" class="section level1">
 <h1>Creating Security Group for RDS</h1>
