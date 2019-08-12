@@ -266,10 +266,10 @@ Some R packages like Tidyverse require memory larger than 1GB to successfully do
 
 ```{r eval=FALSE}
 #Create Swap file memory to avoid using bigger instance
-`sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=2048`
-`sudo /sbin/mkswap /var/swap.1`
-`sudo /sbin/swapon /var/swap.1`
-`sudo sh -c 'echo "/var/swap.1 swap swap defaults 0 0 " >> /etc/fstab'`
+sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=2048
+sudo /sbin/mkswap /var/swap.1
+sudo /sbin/swapon /var/swap.1
+sudo sh -c 'echo "/var/swap.1 swap swap defaults 0 0 " >> /etc/fstab'
 ```
 
 <br> 
@@ -304,8 +304,10 @@ wget https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.9.923-am
 sudo gdebi -n shiny-server-1.5.9.923-amd64.deb
 sudo rm shiny-server-1.5.9.923-amd64.deb
 
-# Dependencies for R packages like RMariaDB, devtools, tidyverse, sparklyr
-sudo apt -y install libcurl4-openssl-dev libssl-dev libxml2-dev libmariadbclient-dev build-essential libcurl4-gnutls-dev
+# Dependencies for R packages like RMariaDB, devtools, tidyverse, sparklyr. Please run seperate.
+sudo apt -y install libcurl4-openssl-dev 
+
+sudo apt -y install libssl-dev libxml2-dev libmariadbclient-dev build-essential libcurl4-gnutls-dev
 
 
 # Install RStudio
