@@ -5,8 +5,7 @@ date: '2019-08-06'
 coverSize: partial
 coverImage: https://res.cloudinary.com/dyackvnwm/image/upload/v1563205259/ec2-rstudio.png
 slug: aws-r
-summary: "In my previous post Databases in the Cloud, I went over some of the benefits Amazon Web Services has to offer. Amazon EC2 is just another great service offered by Amazon. Simply speaking, EC2 is basiacally a virtual server that offers a variety of operating systems and computational power.
-EC2 allows users to build apps, automate scaling according to changing needs and peak periods, deploy computational intensive models, streamline development processes, and create virtual servers to manage storage, lessening the need to invest in infrastructure."
+summary: "In my previous post Databases in the Cloud, I went over some of the benefits Amazon Web Services has to offer. Amazon EC2 is just another great service offered by Amazon. Simply speaking, EC2 is basiacally a virtual server that offers a variety of operating systems and computational power. EC2 allows users to build apps, automate scaling according to changing needs and peak periods, deploy computational intensive models, streamline development processes, and create virtual servers to manage storage, lessening the need to invest in infrastructure."
 tags:
 - EC2
 - Cloud
@@ -17,9 +16,9 @@ categories:
 - R
 - MySQL
 - Programming
+- Deploying Website / Apps
 ---
 
-# Amazon Web Services with R 
 
 - Advantages of using Amazon's EC2 service with R
 - [Short and Easy Installation](#short-easy)
@@ -367,7 +366,7 @@ As a reminder, port 80 is the default internet port which enables users to use; 
 >I will show how to install and use nginx in order to run both Shiny & RStudio on port 80 in a future post. 
 
 
-For this post, I am going to leave RStudio on port 8787 but the command to switch it to port 80 is below (or simply just open and edit the .conf file).
+For this post, I am going to leave RStudio on port 8787 but the command to switch it to port 80 is below (or simply just open and edit the .conf file). I am going to leave it on port 8787 because in a future post, nginx will be able to route ports like 8787 and 3838 to port 80.
 
 
 ```{r eval=FALSE}
@@ -483,7 +482,6 @@ exit;
 RStudio and MySQL are working well, so lets see if those useful packages we installed earlier are also working. We should see a datatable if everything went as planned.
 
 ```{r message=FALSE, warning=FALSE}
-
 library(RCurl) 
 data <- read.table(textConnection(getURL("https://cgiardata.s3-us-west-2.amazonaws.com/ccafs/amzn.csv")), sep=",", header=FALSE)
 head(data)
