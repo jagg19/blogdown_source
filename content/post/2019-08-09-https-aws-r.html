@@ -24,8 +24,8 @@ categories:
 
 
 
-<div id="https-to-secure-your-r-work-environment" class="section level1">
-<h1>HTTPS to Secure Your R Work Environment</h1>
+<div id="https-to-secure-your-rstudio-shiny-work-environment" class="section level1">
+<h1>HTTPS to Secure Your RStudio + Shiny Work Environment</h1>
 <p>Click any link in list below to jump to topic</p>
 <ul>
 <li><a href="#freenom">Creating a Friendly URL</a></li>
@@ -297,6 +297,9 @@ categories:
 <p>Finally, restart the nginx service. When you alter .conf files, you have to restart the service to implement your new changes.</p>
 <p><code>sudo systemctl restart nginx</code></p>
 <p><br></p>
+</div>
+<div id="secured-new-domain-success" class="section level3">
+<h3>Secured New Domain: Success</h3>
 <p>When we visit any of our subdomains, we should be directed to the correct server! Also, all HTTP request will convert to HTTPS (thanks to the rule we set in our Load Balancer) to stay secured. Try “<a href="http://subdomain.yourwebsite.com" class="uri">http://subdomain.yourwebsite.com</a>” and see if it converts to HTTPS. You should see that it does and you’ll always notice the little lock to the left of the URL!</p>
 <p><img src="/img/HTTPS/subdomain-success.png" /></p>
 <p><br></p>
