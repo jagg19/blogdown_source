@@ -1,7 +1,7 @@
 ---
 title: "Dropbox Valuation - Quick N' Clean"
 author: "Jagger Villalobos"
-date: '2019-08-16'
+date: '2019-09-09'
 coverSize: partial
 coverImage: https://res.cloudinary.com/dyackvnwm/image/upload/v1568050734/image.jpg
 slug: dbx-q3-quicknclean
